@@ -21,13 +21,7 @@ class UserController extends Controller
 	
 	public function create()
     {
-    	//$request->flashOnly('name', 'email');
-    	//$request->flash();
-    	//dd(Input::all());
-    	//$request->flash();
-    	//print_r($request->old('username'));
     	return view('user.create');
-    	//return redirect()->route('users.create')->withInput();
     }
 
     public function store()

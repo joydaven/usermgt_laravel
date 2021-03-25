@@ -1,5 +1,5 @@
 <?php
-
+Use App\User;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -17,6 +17,9 @@ Route::get('/', function () {
 
 Route::auth();
 Route::group(['middleware' => ['auth']], function () {
-	Route::resource('/users','UserController',['except'=>['show','create','store']]);
+	Route::get('user/{id}', function($id) {
+    	return User::find($id);
+	});
+	Route::resource('/users','UserController',['except'=>['show']]);
 });
 

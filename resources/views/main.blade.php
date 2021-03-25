@@ -7,17 +7,23 @@
         <div class="col-md-10 col-md-offset-1">
             <div class="panel panel-default">
                 <div class="panel-heading">Dashboard</div>
-
+                @if (Session::has('message'))
+                    <div class="alert alert-{{ Session::get('message')[1] }} alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        {{ Session::get('message')[0] }}
+                    </div>
+                @endif
                 <div class="panel-body">
                     @if(isset($users))
                         <div class="panel panel-default">
-                            <div class="panel-heading">Users</div>
+                            <div class="panel-heading">Users <a href="{{ route('users.create') }}" style="float:right;"><button type="button" class="btn btn-primary btn-md"  data-toggle="tooltip" data-placement="top" title="Add" aria-hidden="true"><span class="glyphicon glyphicon-plus"></span> Create User</button></a>
                             <table class="table table-striped">
                                 <thead>
                                     <th>id</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Date Created</th>
+                                    <th>Date Updated</th>
                                     <th>&nbsp;</th>
                                 </thead>
                                 <tbody>
@@ -27,14 +33,24 @@
                                         <td>{{$user->name}}</td>
                                         <td>{{$user->email}}</td>
                                         <td>{{date("Y-m-d H:i:s",strtotime($user->created_at))}}</td>
+                                        <td>{{date("Y-m-d H:i:s",strtotime($user->updated_at))}}</td>
                                         <td>
-                                            <a href="{{ route('users.edit',$user->id) }}"><button type="button" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil" data-toggle="tooltip" data-placement="top" title="Edit" aria-hidden="true"></span></button>
-                                            <a href="{{ route('users.edit',$user->id) }}"><button type="button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash" data-toggle="tooltip" data-placement="top" title="Delete" aria-hidden="true"></span></button>
+                                            <div class="col-xs-2 pull-right">
+                                                <form class="form-horizontal" role="form" method="POST" action="{{ route('users.destroy',$user->id) }}" onsubmit="return destroyme();" >
+                                                    {{ csrf_field() }}
+                                                    {{ method_field('DELETE')}}
+                                                    <button type="submit" class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="top" title="Delete" aria-hidden="true"><span class="glyphicon glyphicon-trash"></span></button>
+                                                </form>
+                                            </div>
+                                            <div class="col-xs-2 pull-right">
+                                                <a href="{{ route('users.edit',$user->id) }}"><button type="button" class="btn btn-primary btn-xs" data-toggle="tooltip" data-placement="top" title="Edit" aria-hidden="true"><span class="glyphicon glyphicon-pencil"></span></button>
+                                            </div>
                                         </td>
                                     </tr>
                                     @endforeach
                                 </tbody>
                             </table>
+                            {{$users->links()}}
                         </div>
                     @else
                         Welcome to User Management click <a href="{{ route('users.index') }}">Manage Users</a> to start.
@@ -97,8 +113,6 @@
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-btn fa-sign-in"></i> Login
                                 </button>
-
-                                <a class="btn btn-link" href="{{ url('/password/reset') }}">Forgot Your Password?</a>
                             </div>
                         </div>
                     </form>
@@ -108,4 +122,10 @@
     </div>
 </div>
 @endif
+<script type="text/javascript">
+function destroyme(id){
+    var r = confirm("Are you sure you want to delete user id: "+id+"?");
+    return r;
+}
+</script>
 @endsection
